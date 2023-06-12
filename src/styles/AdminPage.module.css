@@ -1,0 +1,13 @@
+.form {
+  width: 70%;
+  background-color: rgb(218, 218, 218);
+  padding: 30px;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 5px;
+  gap: 20px;
+  margin-bottom: 20px;
+}
