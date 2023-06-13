@@ -1,4 +1,4 @@
-export default function Example({ label, name, type, value, setValue }) {
+export default function Example({ label, name, type, value, setValue, error }) {
   return (
     <div className="w-[70%]">
       <label
@@ -51,6 +51,7 @@ export default function Example({ label, name, type, value, setValue }) {
           </div>
         </div>
       )}
+      {error && <p className="text-red-600 font-[600] text-[14px]">{error}</p>}
     </div>
   );
 }

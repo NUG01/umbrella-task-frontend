@@ -9,6 +9,14 @@ import BasicAxios from "../lib/axios";
 import MediaAxios from "../lib/axios/MediaAxios";
 import { addProduct } from "../services/ProductServices";
 
+const errors = {
+  name: "პროდუქტის სახელის ველის შევსება აუცილებელია!",
+  description: "პროდუქტის აღწერის ველის შევსება აუცილებელია!",
+  price: "პროდუქტის ფასის ველის შევსება აუცილებელია!",
+  image: "აუცილებელია მინიმუმ 1 სურათის ატვირთვა!",
+  category: "აუცილებელია მინიმუმ 1 კატეგორიის არჩევა!",
+};
+
 function AddProductPage() {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
@@ -24,6 +32,12 @@ function AddProductPage() {
     []
   );
 
+  const [nameError, setNameError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [priceError, setPriceError] = useState("");
+  const [imageError, setImageError] = useState("");
+  const [categoryError, setCategoryError] = useState("");
+
   useEffect(() => {
     (async () => {
       const res = await getCategories();
@@ -31,6 +45,31 @@ function AddProductPage() {
       setIsFetched(true);
     })();
   }, []);
+
+  function validateForm() {
+    setNameError("");
+    setDescriptionError("");
+    setPriceError("");
+    setImageError("");
+    setCategoryError("");
+    if (!productName) setNameError(errors.name);
+    if (!description) setDescriptionError(errors.description);
+    if (!price) setPriceError(errors.price);
+    if (images.length == 0) setImageError(errors.image);
+    if (pickedCategoryIdCollection.length == 0)
+      setCategoryError(errors.category);
+    if (
+      !productName ||
+      !description ||
+      !price ||
+      images.length == 0 ||
+      pickedCategoryIdCollection.length == 0
+    ) {
+      return false;
+    } else {
+      return true;
+    }
+  }
 
   function imagePreviewsHandler(ev) {
     const file = ev.target.files[0];
@@ -62,6 +101,8 @@ function AddProductPage() {
 
   async function submitHandler(ev) {
     ev.preventDefault();
+    const response = validateForm();
+    if (response == false) return;
     const data = [
       productName,
       description,
@@ -80,30 +121,36 @@ function AddProductPage() {
       <form onSubmit={submitHandler} className={styles.form}>
         <BasicInput
           setValue={(value) => {
+            setNameError("");
             setProductName(value);
           }}
           value={productName}
           label="პროდუქტის სახელი"
           name="product-name"
           type="text"
+          error={nameError}
         />
         <BasicInput
           setValue={(value) => {
+            setDescriptionError("");
             setDescription(value);
           }}
           value={description}
           label="აღწერა"
           name="description"
           type="textarea"
+          error={descriptionError}
         />
         <BasicInput
           setValue={(value) => {
+            setPriceError("");
             setPrice(value);
           }}
           value={price}
           label="ფასი"
           name="price"
           type="text"
+          error={priceError}
         />
         <div className="relative mt-[20px]">
           <button
@@ -114,12 +161,20 @@ function AddProductPage() {
             <PlusIcon className="h-5 w-5" aria-hidden="true" />
           </button>
           <input
-            onChange={(ev) => imagePreviewsHandler(ev)}
+            onChange={(ev) => {
+              setImageError("");
+              imagePreviewsHandler(ev);
+            }}
             id="images"
             name="images"
             type="file"
             className="opacity-0 absolute top-0 left-0 w-[100%] h-[100%] z-50"
           />
+          {imageError && (
+            <p className="text-red-600 font-[600] text-[14px] mt-[10px]">
+              {imageError}
+            </p>
+          )}
         </div>
         <div className="grid grid-cols-5 mt-[20px] gap-[12px] w-[70%] justify-items-center">
           {imagePreviews.map((img, i) => {
@@ -144,6 +199,15 @@ function AddProductPage() {
             return (
               <CategoryPickerButton
                 pickClick={(action) => {
+                  if (
+                    pickedCategoryIdCollection.length > 1 &&
+                    action == "remove"
+                  ) {
+                    setCategoryError("");
+                  }
+                  if (action == "add") {
+                    setCategoryError("");
+                  }
                   categoryCheckboxClickHandler(action, cat);
                 }}
                 picked={pickedCategoryIdCollection.includes(cat.id)}
@@ -154,6 +218,9 @@ function AddProductPage() {
             );
           })}
         </div>
+        {categoryError && (
+          <p className="text-red-600 font-[600] text-[14px]">{categoryError}</p>
+        )}
         <div className="w-[10%] flex items-center justify-center mt-[20px]">
           <BasicButton submit={true}>დამატება</BasicButton>
         </div>
