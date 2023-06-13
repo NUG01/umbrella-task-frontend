@@ -8,6 +8,7 @@ import BasicButton from "../components/BasicButton";
 import BasicAxios from "../lib/axios";
 import MediaAxios from "../lib/axios/MediaAxios";
 import { addProduct } from "../services/ProductServices";
+import { useNavigate } from "react-router-dom";
 
 const errors = {
   name: "პროდუქტის სახელის ველის შევსება აუცილებელია!",
@@ -31,6 +32,8 @@ function AddProductPage() {
   const [pickedCategoryIdCollection, setPickedCategoryIdCollection] = useState(
     []
   );
+
+  const navigate = useNavigate();
 
   const [nameError, setNameError] = useState("");
   const [descriptionError, setDescriptionError] = useState("");
@@ -103,17 +106,28 @@ function AddProductPage() {
     ev.preventDefault();
     const response = validateForm();
     if (response == false) return;
-    const data = [
-      productName,
-      description,
-      price,
-      pickedCategoryIdCollection,
-      images,
-    ];
+    const formdata = new FormData();
+    formdata.append("name", productName);
+    formdata.append("description", description);
+    formdata.append("price", price);
+    images.forEach((image, index) => {
+      formdata.append(`images[${index}]`, image);
+    });
+    for (let index = 0; index < pickedCategoryIdCollection.length; index++) {
+      formdata.append(
+        `product_categories_id[]`,
+        pickedCategoryIdCollection[index]
+      );
+    }
+
+    console.log(formdata);
+
     try {
-      const res = await addProduct(data);
-      console.log(res);
-    } catch (error) {}
+      await addProduct(formdata);
+      navigate("/");
+    } catch (error) {
+      alert("Error");
+    }
   }
   if (!isFetched) return;
   return (

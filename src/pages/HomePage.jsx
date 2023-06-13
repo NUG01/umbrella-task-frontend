@@ -2,8 +2,24 @@ import MainTable from "../components/MainTable";
 import styles from "../styles/HomePage.module.css";
 import BasicButton from "../components/BasicButton.jsx";
 import { NavLink } from "react-router-dom";
+import BasicAxios from "../lib/axios";
+import { useState, useEffect } from "react";
 
 function HomePage() {
+  const [isFetched, setIsFetched] = useState(false);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await BasicAxios.get("products");
+        setData(res.data);
+        setIsFetched(true);
+      } catch (error) {}
+    })();
+  }, []);
+
+  if (!isFetched) return;
   return (
     <section>
       <NavLink
@@ -13,7 +29,7 @@ function HomePage() {
         <BasicButton>პანელზე გადასვლა</BasicButton>
       </NavLink>
       <div className={styles.tableContainer}>
-        <MainTable></MainTable>
+        <MainTable data={data}></MainTable>
       </div>
     </section>
   );
