@@ -12,7 +12,7 @@ export default function MainTable({ data }) {
   useEffect(() => {
     setProducts(data);
     setFeteched(true);
-  }, []);
+  }, [data]);
 
   if (products.length == 0) {
     return <h1>პროდუქტები ვერ მოიძებნა!</h1>;
@@ -33,6 +33,14 @@ export default function MainTable({ data }) {
   async function detailsHandler(id) {
     setDetails(products.find((x) => x.id == id));
     setShowDetailsModal(true);
+  }
+
+  function keyNamesTranslator(key) {
+    if (key == "name") return "სახელი";
+    if (key == "description") return "აღწერა";
+    if (key == "price") return "ფასი";
+    if (key == "images") return "სურათი";
+    if (key == "category_names") return "კატეგორია";
   }
 
   if (!fetched) return;
@@ -71,9 +79,7 @@ export default function MainTable({ data }) {
                           scope="col"
                           className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
                         >
-                          {key == "category_names"
-                            ? "Category name"
-                            : key.replaceAll("_", " ")}
+                          {keyNamesTranslator(key)}
                         </th>
                       );
                     })}
@@ -119,14 +125,14 @@ export default function MainTable({ data }) {
                           type="button"
                           className="text-indigo-600 hover:text-indigo-900"
                         >
-                          Details
+                          დეტალები
                         </button>
                         <button
                           onClick={() => deleteHandler(product.id)}
                           type="button"
                           className="text-red-600 hover:text-red-900"
                         >
-                          Delete
+                          წაშლა
                         </button>
                       </td>
                     </tr>
