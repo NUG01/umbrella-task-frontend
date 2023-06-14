@@ -1,14 +1,12 @@
-import BasicInput from "../components/BasicInput";
-import styles from "../styles/AdminPage.module.css";
-import { useState, useEffect } from "react";
 import { PlusIcon } from "@heroicons/react/20/solid";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import BasicButton from "../components/BasicButton";
+import BasicInput from "../components/BasicInput";
 import CategoryPickerButton from "../components/CategoryPickerButton";
 import { getCategories } from "../services/CategoryServices";
-import BasicButton from "../components/BasicButton";
-import BasicAxios from "../lib/axios";
-import MediaAxios from "../lib/axios/MediaAxios";
 import { addProduct } from "../services/ProductServices";
-import { useNavigate } from "react-router-dom";
+import styles from "../styles/AdminPage.module.css";
 
 const errors = {
   name: "პროდუქტის სახელის ველის შევსება აუცილებელია!",
@@ -28,7 +26,6 @@ function AddProductPage() {
   const [isFetched, setIsFetched] = useState(false);
   const [categories, setCategories] = useState([]);
 
-  const [pickedCategories, setPickedCategories] = useState([]);
   const [pickedCategoryIdCollection, setPickedCategoryIdCollection] = useState(
     []
   );
@@ -120,7 +117,6 @@ function AddProductPage() {
       );
     }
 
-    console.log(formdata);
 
     try {
       await addProduct(formdata);
