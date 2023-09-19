@@ -5,6 +5,8 @@ import BasicInput from "../components/BasicInput";
 import MainTable from "../components/MainTable";
 import BasicAxios from "../lib/axios";
 import styles from "../styles/HomePage.module.css";
+import UmbrellaFetchIcon from "../assets/icons/UmbrellaFetchIcon.jsx";
+import LoadingSpinner from "../components/LoadingSpinner.jsx";
 
 function HomePage() {
   const [isFetched, setIsFetched] = useState(false);
@@ -14,28 +16,35 @@ function HomePage() {
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [categoryName, setCategoryName] = useState("");
+  const [paginationCount, setPaginationCount] = useState(1);
 
   useEffect(() => {
     (async () => {
       try {
-        const res = await BasicAxios.get("products");
-        setData(res.data);
-        setIsFetched(true);
+        const res = await BasicAxios.get("products?page=" + paginationCount);
+        if (paginationCount == 1) {
+          setData(res.data.data);
+        }
+        if (paginationCount > 1) {
+          setData(() => [...res.data.data, ...data]);
+        }
       } catch (error) {
         alert("Error");
+      } finally {
+        setIsFetched(true);
       }
     })();
-  }, []);
+  }, [paginationCount]);
 
   async function filterHandler(ev) {
     ev.preventDefault();
     setFilterError(false);
     if (categoryName || description || price || productName) {
-      const res = await BasicAxios.get(
-        `products?category_name=${categoryName}&description=${description}&price=${price}&product_name=${productName}`
+      const response = await BasicAxios.get(
+        `products?search=true&category_name=${categoryName}&description=${description}&price=${price}&product_name=${productName}`
       );
-      if (!res.data.length == 0) {
-        setData(res.data);
+      if (!response.data.data.length == 0) {
+        setData(response.data.data);
         return;
       } else {
         setFilterError(true);
@@ -44,23 +53,21 @@ function HomePage() {
         }, 7200);
       }
     }
-    const res = await BasicAxios.get("products");
-    setData(res.data);
+    const res = await BasicAxios.get("products?page=" + 1);
+    setData(res.data.data);
   }
 
-  if (!isFetched) return;
+  // if (!isFetched) return;
   return (
     <section>
       <NavLink
         to="/admin/add-product"
-        className="absolute right-0 top-0 -translate-x-1/2  translate-y-1/2"
-      >
+        className="absolute right-0 top-0 -translate-x-1/2  translate-y-1/2">
         <BasicButton>პანელზე გადასვლა</BasicButton>
       </NavLink>
       <div
         className={styles.tableContainer}
-        style={{ display: "flex", flexDirection: "column" }}
-      >
+        style={{ display: "flex", flexDirection: "column" }}>
         <form onSubmit={filterHandler} className="flex gap-[10px]">
           <BasicInput
             setValue={(value) => {
@@ -108,7 +115,16 @@ function HomePage() {
             განახლდა.
           </p>
         )}
-        <MainTable data={data}></MainTable>
+        <div className="relative w-[80%]">
+          <div
+            onClick={() => setPaginationCount((prev) => prev + 1)}
+            className="absolute top-[30px] left-[-7%] flex flex-col items-center justify-center cursor-pointer">
+            <UmbrellaFetchIcon />
+            <p>პაგინაცია</p>
+          </div>
+          {!isFetched && <LoadingSpinner />}
+          {isFetched && <MainTable data={data}></MainTable>}
+        </div>
       </div>
     </section>
   );

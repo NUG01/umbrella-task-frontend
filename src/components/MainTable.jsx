@@ -4,14 +4,14 @@ import DetailsModal from "./DetailsModal";
 
 export default function MainTable({ data }) {
   const [products, setProducts] = useState([]);
-  const [fetched, setFeteched] = useState(false);
 
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [details, setDetails] = useState(null);
+  const [fetched, setFetched] = useState(false);
 
   useEffect(() => {
     setProducts(data);
-    setFeteched(true);
+    setFetched(true);
   }, [data]);
 
   if (products.length == 0) {
@@ -50,8 +50,7 @@ export default function MainTable({ data }) {
         <div>
           <div
             onClick={() => setShowDetailsModal(false)}
-            className="absolute top-0 left-0 bg-gray-200 opacity-[0.6] w-[100vw] h-[100vh] z-[50]"
-          ></div>
+            className="fixed top-0 left-0 bg-gray-200 opacity-[0.6] w-[100vw] h-[100vh] z-[50]"></div>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100] shadow-md border-[2px] border-solid rounded-[10px]">
             <DetailsModal
               closeModal={() => {
@@ -77,16 +76,14 @@ export default function MainTable({ data }) {
                         <th
                           key={i}
                           scope="col"
-                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                        >
+                          className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                           {keyNamesTranslator(key)}
                         </th>
                       );
                     })}
                     <th
                       scope="col"
-                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"
-                    ></th>
+                      className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
@@ -97,8 +94,7 @@ export default function MainTable({ data }) {
                         return (
                           <td
                             key={i}
-                            className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
-                          >
+                            className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                             {key == "category_names" && product[key][0]}
                             {key == "description" &&
                               (product[key].length > 30 ? "..." : product[key])}
@@ -123,15 +119,13 @@ export default function MainTable({ data }) {
                         <button
                           onClick={() => detailsHandler(product.id)}
                           type="button"
-                          className="text-indigo-600 hover:text-indigo-900"
-                        >
+                          className="text-indigo-600 hover:text-indigo-900">
                           დეტალები
                         </button>
                         <button
                           onClick={() => deleteHandler(product.id)}
                           type="button"
-                          className="text-red-600 hover:text-red-900"
-                        >
+                          className="text-red-600 hover:text-red-900">
                           წაშლა
                         </button>
                       </td>

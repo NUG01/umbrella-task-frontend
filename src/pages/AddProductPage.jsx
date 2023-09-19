@@ -8,14 +8,6 @@ import { getCategories } from "../services/CategoryServices";
 import { addProduct } from "../services/ProductServices";
 import styles from "../styles/AdminPage.module.css";
 
-const errors = {
-  name: "პროდუქტის სახელის ველის შევსება აუცილებელია!",
-  description: "პროდუქტის აღწერის ველის შევსება აუცილებელია!",
-  price: "პროდუქტის ფასის ველის შევსება აუცილებელია!",
-  image: "აუცილებელია მინიმუმ 1 სურათის ატვირთვა!",
-  category: "აუცილებელია მინიმუმ 1 კატეგორიის არჩევა!",
-};
-
 function AddProductPage() {
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
@@ -117,7 +109,6 @@ function AddProductPage() {
       );
     }
 
-
     try {
       await addProduct(formdata);
       navigate("/");
@@ -125,6 +116,7 @@ function AddProductPage() {
       alert("Error");
     }
   }
+
   if (!isFetched) return;
   return (
     <section>
@@ -165,8 +157,7 @@ function AddProductPage() {
         <div className="relative mt-[20px]">
           <button
             type="button"
-            className="rounded-full flex items-center  justify-center bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
+            className="rounded-full flex items-center  justify-center bg-indigo-600 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
             <span>სურათის დამატება</span>
             <PlusIcon className="h-5 w-5" aria-hidden="true" />
           </button>
@@ -203,8 +194,7 @@ function AddProductPage() {
             categories.length > 0
               ? "border-b-[2px] border-b-[solid] border-b-indigo-500 pb-[10px]"
               : undefined
-          }`}
-        >
+          }`}>
           {categories.map((cat) => {
             return (
               <CategoryPickerButton
@@ -240,3 +230,11 @@ function AddProductPage() {
 }
 
 export default AddProductPage;
+
+const errors = {
+  name: "პროდუქტის სახელის ველის შევსება აუცილებელია!",
+  description: "პროდუქტის აღწერის ველის შევსება აუცილებელია!",
+  price: "პროდუქტის ფასის ველის შევსება აუცილებელია!",
+  image: "აუცილებელია მინიმუმ 1 სურათის ატვირთვა!",
+  category: "აუცილებელია მინიმუმ 1 კატეგორიის არჩევა!",
+};
